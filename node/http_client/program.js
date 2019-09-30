@@ -1,12 +1,18 @@
 'use strict';
 
 var http = require('http');
+var bl = require('bl');
 var url = process.argv[2];
 
 http.get(url, (response) => {
-    response.setEncoding('utf8');
-    response.on('data', console.log);
-    response.on('error', console.error);
+    response.pipe(bl((err, data) => {
+        if (err) {
+            return console.error(err)
+        }
+        data = data.toString();
+        console.log(data.length);
+        console.log(data)
+    }))
 }).on('error', (e) => {
     console.error(`Got error: ${e.message}`);
 });
